@@ -3,9 +3,15 @@ on:
   push:
     branches:
       - "main"
-  pull_request: 
+    paths-ignore:
+      - 'README.md'
+      - 'LICENSE'
+  pull_request:
     branches:
       - "main"
+    paths-ignore:
+      - 'README.md'
+      - 'LICENSE'
   workflow_dispatch: {}
 
 concurrency:
