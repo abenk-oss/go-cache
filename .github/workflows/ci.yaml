@@ -1,0 +1,30 @@
+name: Continuous Integration Pipeline
+on:
+  push:
+    branches:
+      - "main"
+  pull_request: 
+    branches:
+      - "main"
+  workflow_dispatch: {}
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  test:
+    name: Run audit and unit test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up Go environment
+        uses: actions/setup-go@v5
+        with:
+           go-version: "1.23.2"
+      - name: Format code and tidy modfile
+        run: make tidy
+      - name: Run audit checks
+        run: make audit
+      - name: Run unit tests
+        run: make test

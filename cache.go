@@ -16,7 +16,7 @@ type item[V any] struct {
 	expiry time.Time
 }
 
-// Initializes a new Cache instance and launches a goroutine
+// New initializes a new Cache instance and launches a goroutine
 // that periodically removes expired items from the cache based on the
 // specified cleanupInterval.
 func New[K comparable, V any](cleanupInterval time.Duration) *Cache[K, V] {
@@ -40,7 +40,7 @@ func New[K comparable, V any](cleanupInterval time.Duration) *Cache[K, V] {
 			}
 
 			for _, k := range expiredKeys {
-				delete(c.items, k)
+				c.delete(k)
 			}
 
 			c.mu.Unlock()
@@ -56,10 +56,7 @@ func (c *Cache[K, V]) Set(key K, data V, ttl time.Duration) {
 	c.mu.Lock()
 	defer c.mu.Unlock()
 
-	c.items[key] = item[V]{
-		value:  data,
-		expiry: time.Now().Add(ttl),
-	}
+	c.set(key, data, ttl)
 }
 
 // Add inserts an item into the cache if no existing item is associated
@@ -74,13 +71,13 @@ func (c *Cache[K, V]) Add(key K, data V, ttl time.Duration) error {
 	if item, found := c.items[key]; found {
 
 		if item.isExpired() {
-			delete(c.items, key)
+			c.delete(key)
 		} else {
 			return fmt.Errorf("item %v already exists", key)
 		}
 	}
 
-	c.Set(key, data, ttl)
+	c.set(key, data, ttl)
 	return nil
 }
 
@@ -93,13 +90,13 @@ func (c *Cache[K, V]) Replace(key K, data V, ttl time.Duration) error {
 	c.mu.Lock()
 	defer c.mu.Unlock()
 
-	if item, found := c.items[key]; found {
+	if i, found := c.items[key]; found {
 
-		if item.isExpired() {
-			delete(c.items, key)
+		if i.isExpired() {
+			c.delete(key)
 			return fmt.Errorf("item %v is expired", key)
 		} else {
-			c.Set(key, data, ttl)
+			c.set(key, data, ttl)
 			return nil
 		}
 	}
@@ -116,16 +113,16 @@ func (c *Cache[K, V]) Get(key K) (V, bool) {
 	c.mu.Lock()
 	defer c.mu.Unlock()
 
-	item, found := c.items[key]
+	i, found := c.items[key]
 	if !found {
-		return item.value, false
+		return i.value, false
 	}
-	if item.isExpired() {
-		delete(c.items, key)
-		return item.value, false
+	if i.isExpired() {
+		c.delete(key)
+		return i.value, false
 	}
 
-	return item.value, true
+	return i.value, true
 }
 
 // Pop deletes and returns the item associated with the specified key from the cache.
@@ -137,18 +134,18 @@ func (c *Cache[K, V]) Pop(key K) (V, bool) {
 	c.mu.Lock()
 	defer c.mu.Unlock()
 
-	item, found := c.items[key]
+	i, found := c.items[key]
 	if !found {
-		return item.value, false
+		return i.value, false
 	}
 
-	delete(c.items, key)
+	c.delete(key)
 
-	if item.isExpired() {
-		return item.value, false
+	if i.isExpired() {
+		return i.value, false
 	}
 
-	return item.value, true
+	return i.value, true
 }
 
 // Remove removes the item associated with the specified key from the cache.
@@ -158,7 +155,7 @@ func (c *Cache[K, V]) Remove(key K) {
 	c.mu.Lock()
 	defer c.mu.Unlock()
 
-	delete(c.items, key)
+	c.delete(key)
 }
 
 // RemoveExpired removes all items from the cache that have expired.
@@ -169,14 +166,14 @@ func (c *Cache[K, V]) RemoveExpired() {
 
 	var expiredKeys []K
 
-	for key, item := range c.items {
-		if item.isExpired() {
+	for key, i := range c.items {
+		if i.isExpired() {
 			expiredKeys = append(expiredKeys, key)
 		}
 	}
 
 	for _, key := range expiredKeys {
-		delete(c.items, key)
+		c.delete(key)
 	}
 }
 
