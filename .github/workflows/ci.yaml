@@ -6,12 +6,16 @@ on:
     paths-ignore:
       - 'README.md'
       - 'LICENSE'
+      - 'CONTRIBUTING.md'
+      - 'CONTRIBUTORS'
   pull_request:
     branches:
       - "main"
     paths-ignore:
       - 'README.md'
       - 'LICENSE'
+      - 'CONTRIBUTING.md'
+      - 'CONTRIBUTORS'
   workflow_dispatch: {}
 
 concurrency:
