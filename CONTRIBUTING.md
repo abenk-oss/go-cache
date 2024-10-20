@@ -7,7 +7,6 @@ Thank you for your interest in contributing to go-cache! We appreciate all contr
 1. [Getting Started](#getting-started)
 2. [How to Contribute](#how-to-contribute)
    - [Fork the Repository](#fork-the-repository)
-   - [Clone Your Fork](#clone-your-fork)
    - [Create a Feature Branch](#create-a-feature-branch)
    - [Write Unit Tests](#write-unit-tests)
    - [Use Makefile Commands](#use-makefile-commands)
@@ -29,10 +28,6 @@ Once your development environment is set up, follow the steps below to contribut
 ### Fork the Repository
 
 Start by forking the go-cache repository to your own GitHub account.
-
-### Clone Your Fork
-
-Next, clone the forked repository to your local machine.
 
 ### Create a Feature Branch
 
