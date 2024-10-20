@@ -4,23 +4,19 @@ on:
     branches:
       - "main"
     paths-ignore:
-      - 'README.md'
-      - 'LICENSE'
-      - 'CONTRIBUTING.md'
-      - 'CONTRIBUTORS'
+      - "README.md"
+      - "LICENSE"
+      - "CONTRIBUTING.md"
+      - "CONTRIBUTORS"
   pull_request:
     branches:
       - "main"
     paths-ignore:
-      - 'README.md'
-      - 'LICENSE'
-      - 'CONTRIBUTING.md'
-      - 'CONTRIBUTORS'
+      - "README.md"
+      - "LICENSE"
+      - "CONTRIBUTING.md"
+      - "CONTRIBUTORS"
   workflow_dispatch: {}
-
-concurrency:
-  group: ${{ github.workflow }}-${{ github.ref }}
-  cancel-in-progress: true
 
 jobs:
   test:
@@ -31,7 +27,7 @@ jobs:
       - name: Set up Go environment
         uses: actions/setup-go@v5
         with:
-           go-version: "1.23.2"
+          go-version: "1.23.2"
       - name: Format code and tidy modfile
         run: make tidy
       - name: Run audit checks
