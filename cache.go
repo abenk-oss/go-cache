@@ -84,7 +84,7 @@ func (c *Cache[K, V]) Add(key K, data V, ttl time.Duration) error {
 // Replace updates the value for a cache key only if the key already exists
 // and the associated item has not expired. If the item has expired, it
 // attempts to delete it and returns an error indicating that the value
-// cannot be set.
+// cannot be replaced.
 func (c *Cache[K, V]) Replace(key K, data V, ttl time.Duration) error {
 
 	c.mu.Lock()
@@ -158,7 +158,7 @@ func (c *Cache[K, V]) Remove(key K) {
 	c.delete(key)
 }
 
-// RemoveExpired removes all items from the cache that have expired.
+// RemoveExpired removes all expired items from the cache.
 func (c *Cache[K, V]) RemoveExpired() {
 
 	c.mu.Lock()
@@ -177,7 +177,7 @@ func (c *Cache[K, V]) RemoveExpired() {
 	}
 }
 
-// Clear clears the cache, removing all items permanently.
+// Clear clears the cache, removing all items.
 func (c *Cache[K, V]) Clear() {
 
 	c.mu.Lock()
