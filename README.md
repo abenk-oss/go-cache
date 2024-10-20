@@ -1,6 +1,6 @@
 # go-cache
 
-A thread-safe, generic in-memory key-value store library for Go, optimized for single-machine applications.
+A thread-safe, generic in-memory key-value cache for Go, ideal for single-machine applications. The cache's key advantage is its use of generics, providing type safety and eliminating the need for casting or working with empty interfaces. Additionally, since it operates entirely in-memory with built-in expiration, there's no need for serialization or network transmission, which improves performance for local caching needs.
 
 ## Installation
 
@@ -10,7 +10,7 @@ To install the package, use the following command:
 go get -u github.com/abenk-oss/go-cache
 ```
 
-## Development Objectives
+<!-- ## Development Objectives
 
 - [x] **Set Up Project Boilerplate**
 - [x] **Utilize Go Generics**
@@ -24,7 +24,7 @@ go get -u github.com/abenk-oss/go-cache
   - `RemoveExpired`: Permanently Remove all expired items from the cache.
   - `Clear`: Empty the cache.
 - [x] **Ensure Thread Safety**
-- [x] **Write Comprehensive Unit Tests for The Implemented Features**
+- [x] **Write Comprehensive Unit Tests for The Implemented Features** -->
 
 ## Usage
 
@@ -39,58 +39,41 @@ import (
 
 func main() {
 
- // Initialize a new cache with a cleanup interval of 10 seconds.
- // This will automatically remove expired items in the background.
- c := cache.New[string, string](10 * time.Second)
+  // Create a new cache instance with a cleanup interval of 10 seconds.
+  // In this example, The cache stores string keys and string items.
+  c := cache.New[string, string](10 * time.Second)
 
- // 1. Set a key-value pair with a TTL (Time to Live) of 3 seconds.
- c.Set("sessionToken", "abc123", 3*time.Second)
- 
- // Retrieve the item before it expires.
- if value, found := c.Get("sessionToken"); found {
-  fmt.Println("Session token:", value) 
- }
 
- // Wait for 4 seconds (allowing the TTL to expire).
- time.Sleep(4 * time.Second)
+  // Set the item of the key "foo" to "bar" with a TTL (Time to Live) of 3 seconds.
+  c.Set("foo", "bar", 3*time.Second)
 
- // Attempt to retrieve the value again after it has expired.
- if _, found := c.Get("sessionToken"); !found {
-  fmt.Println("Session token has expired or not found")  
- }
+  // Get the string associated with the key "foo" from the cache
+  if foo, found := c.Get("foo"); found {
+    fmt.Println(foo) 
+  }
 
- // 2. Add an item to the cache only if it doesn't already exist.
- err := c.Add("username", "john_doe", 10*time.Second)
- if err != nil {
-  fmt.Println("Error:", err)
- } else {
-  fmt.Println("Added username successfully")
- }
+  // Add an item to the cache only if it doesn't already exist.
+  err := c.Add("username", "john_doe", 10*time.Second)
+  if err != nil {
+    fmt.Println("Error:", err)
+  } else {
+    fmt.Println("Added username successfully")
+  }
 
- // Attempting to add the same key again will result in an error.
- err = c.Add("username", "jane_doe", 10*time.Second)
- if err != nil {
-  fmt.Println("Error:", err)  // Output: Error: item username already exists
- }
+  // Attempting to add the same key again will result in an error.
+  err = c.Add("username", "jane_doe", 10*time.Second)
+  if err != nil {
+    fmt.Println("Error:", err)  // Output: Error: item username already exists
+  }
 
- // 3. Replace an existing value in the cache if it's still valid.
- err = c.Replace("username", "jane_doe", 10*time.Second)
- if err != nil {
-  fmt.Println("Error:", err)
- } else {
-  fmt.Println("Replaced username successfully")
- }
-
- // 4. Clear the cache entirely.
- c.Clear()
- fmt.Println("Cache cleared")
+  // Clear the cache entirely.
+  c.Clear()
 }
-
 ```
 
 ## Contributing
 
-We welcome contributions to this project!
+We welcome contributions to this project! For detailed guidelines on how to contribute, please see [CONTRIBUTING.md](CONTRIBUTING.md).
 
 ## License
 
