@@ -31,16 +31,10 @@ func New[K comparable, V any](cleanupInterval time.Duration) *Cache[K, V] {
 
 			c.mu.Lock()
 
-			var expiredKeys []K
-
 			for k, item := range c.items {
 				if item.isExpired() {
-					expiredKeys = append(expiredKeys, k)
+					c.delete(k)
 				}
-			}
-
-			for _, k := range expiredKeys {
-				c.delete(k)
 			}
 
 			c.mu.Unlock()
@@ -164,17 +158,12 @@ func (c *Cache[K, V]) RemoveExpired() {
 	c.mu.Lock()
 	defer c.mu.Unlock()
 
-	var expiredKeys []K
-
 	for key, i := range c.items {
 		if i.isExpired() {
-			expiredKeys = append(expiredKeys, key)
+			c.delete(key)
 		}
 	}
 
-	for _, key := range expiredKeys {
-		c.delete(key)
-	}
 }
 
 // Clear clears the cache, removing all items.
